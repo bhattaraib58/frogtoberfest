@@ -94,7 +94,7 @@ class PullRequests extends Component {
       const count = this.counterOtherRepos(data, userDetail);
 
       this.setState({
-        data,
+        data: this.getValidPullRequests(data),
         userDetail,
         loading: false,
         otherReposCount: count,
@@ -162,6 +162,23 @@ class PullRequests extends Component {
     });
 
     return count;
+  }
+
+  /**
+   * Validates and returns an object containing valid pull requests.
+   *
+   * @param {*} data
+   * @returns {*}
+   */
+  getValidPullRequests(data) {
+    const validPullRequests = data.items.filter(pr => {
+      const hasInvalidLabel = ({ name }) => name.toLowerCase() === 'invalid';
+      const isPullRequestValid = pr.labels.filter(hasInvalidLabel).length === 0;
+
+      return isPullRequestValid;
+    });
+
+    return { ...data, total_count: validPullRequests.length, items: validPullRequests }; // eslint-disable-line camelcase
   }
 
   /**

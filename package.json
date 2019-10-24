@@ -26,18 +26,18 @@
   },
   "dependencies": {
     "prop-types": "^15.6.2",
-    "react": "^16.5.2",
-    "react-dom": "^16.5.2",
+    "react": "^16.10.2",
+    "react-dom": "^16.10.2",
     "react-helmet": "^5.2.0",
-    "react-router-dom": "^4.3.1"
+    "react-router-dom": "^5.1.2"
   },
   "devDependencies": {
-    "babel-eslint": "9.0.0",
-    "eslint": "5.12.0",
+    "babel-eslint": "10.0.3",
+    "eslint": "6.5.1",
     "eslint-config-leapfrog": "^2.0.1",
     "eslint-plugin-react": "^7.16.0",
     "prettier": "^1.14.3",
-    "react-scripts": "^2.0.5",
+    "react-scripts": "^3.2.0",
     "tailwindcss": "^0.6.6"
   },
   "engines": {
