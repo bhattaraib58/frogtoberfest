@@ -64,7 +64,7 @@ class UsernameForm extends Component {
   };
 
   render = () => (
-    <div className="pb-4 md:pt-16">
+    <div className="pb-8 md:pt-16">
       <TimeMessage />
       <form
         action="/"

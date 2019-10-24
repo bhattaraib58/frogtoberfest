@@ -13,7 +13,7 @@ class MeLinkInfo extends Component {
   storeUsernameAsMe = () => localStorage.setItem('myGithub', this.props.username);
 
   render = () => (
-    <div className="rounded mx-auto mt-16 overflow-hidden w-5/6 lg:w-1/2 mt-4">
+    <div className="rounded mx-auto mt-8 overflow-hidden w-5/6 lg:w-1/2 mt-4">
       <button
         className="bg-blue-light text-blue-darker mx-auto mt-2 h-8 border-none pointer rounded-sm px-4 block saveUser"
         onClick={this.storeUsernameAsMe}
