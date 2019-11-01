@@ -2,7 +2,7 @@ import React from 'react';
 import getTimeMessage from './getTimeMessage';
 
 const TimeMessage = () => (
-  <p className="text-center text-white pb-2" style={timeMessageStyle}>
+  <p className="text-center pb-3" style={timeMessageStyle}>
     {getTimeMessage()}
   </p>
 );

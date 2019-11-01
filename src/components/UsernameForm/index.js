@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import withRouter from 'react-router-dom/withRouter';
-import TimeMessage from './TimeMessage';
+import PropTypes from 'prop-types';
+
+import { TOTAL_PR_COUNT, TOTAL_OTHER_PR_COUNT } from '../../config';
+import CompletionMessage from './CompletionMessage';
 import UsernameInput from './UsernameInput';
+import TimeMessage from './TimeMessage';
 import CheckButton from './CheckButton';
 
 /**
@@ -11,6 +14,8 @@ import CheckButton from './CheckButton';
 class UsernameForm extends Component {
   static propTypes = {
     username: PropTypes.string,
+    totalPrCount: PropTypes.number,
+    totalOtherPrCount: PropTypes.number,
     // Provided by withRouter()
     history: PropTypes.shape({
       push: PropTypes.func.isRequired
@@ -18,7 +23,9 @@ class UsernameForm extends Component {
   };
 
   static defaultProps = {
-    username: ''
+    username: '',
+    totalPrCount: 0,
+    totalOtherPrCount: 0
   };
 
   state = {
@@ -42,9 +49,9 @@ class UsernameForm extends Component {
   handleSubmit = e => {
     e.preventDefault();
 
-    const username = this.state.username;
+    const username = this.state.username.trim();
 
-    if (username.trim().length === 0) {
+    if (username.length === 0) {
       return;
     }
     const userUrl = this.getUserUrl(username);
@@ -63,25 +70,39 @@ class UsernameForm extends Component {
     return `/user/${username}`;
   };
 
-  render = () => (
-    <div className="pb-8 md:pt-16">
-      <TimeMessage />
-      <form
-        action="/"
-        className="flex h-8 mx-auto w-5/6 md:w-3/5 lg:w-1/3"
-        method="get"
-        onSubmit={this.handleSubmit}
-        style={formStyle}
-      >
-        <UsernameInput value={this.state.username} onChange={this.handleUsernameChange} />
-        <CheckButton />
-      </form>
-    </div>
-  );
-}
+  /**
+   * Check the condition for eligibility.
+   *
+   * @param {*} totalPrCount
+   * @param {*} totalOtherPrCount
+   * @returns {boolean}
+   */
+  checkEligibility(totalPrCount, totalOtherPrCount) {
+    if (totalPrCount < TOTAL_PR_COUNT) {
+      return false;
+    }
 
-const formStyle = {
-  border: '2px solid #133370'
-};
+    return totalOtherPrCount >= TOTAL_OTHER_PR_COUNT;
+  }
+
+  render = () => {
+    const isComplete = this.checkEligibility(this.props.totalPrCount, this.props.totalOtherPrCount);
+
+    return (
+      <div className="pb-8 pt-4 sm:pt-10">
+        {isComplete ? <CompletionMessage /> : <TimeMessage />}
+
+        <form
+          className="flex mx-auto w-3/4 sm:w-1/2"
+          style={{ boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)' }}
+          onSubmit={this.handleSubmit}
+        >
+          <UsernameInput value={this.state.username} onChange={this.handleUsernameChange} />
+          <CheckButton />
+        </form>
+      </div>
+    );
+  };
+}
 
 export default withRouter(UsernameForm);

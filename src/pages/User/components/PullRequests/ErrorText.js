@@ -8,7 +8,7 @@ const ErrorText = ({ errorMessage }) => (
 );
 
 ErrorText.propTypes = {
-  errorMessage: PropTypes.string
+  errorMessage: PropTypes.node
 };
 
 ErrorText.defaultProps = {

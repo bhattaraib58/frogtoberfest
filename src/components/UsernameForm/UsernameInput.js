@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 const UsernameInput = ({ value, onChange }) => (
   <input
-    className="bn br--left rounded-l-sm px-2 flex-auto"
     type="text"
     name="username"
     aria-label="GitHub username"
@@ -13,17 +12,15 @@ const UsernameInput = ({ value, onChange }) => (
     spellCheck="false"
     autoCapitalize="none"
     autoCorrect="off"
-    style={inputStyle}
+    autoComplete="off"
+    style={{ outline: 'none' }}
+    className="bn br--left leading-tight rounded-l p-2 flex-auto border-2 border-blue-lighter focus:border-blue-light border-r-0 text-grey-darkest"
   />
 );
 
 UsernameInput.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func
-};
-
-const inputStyle = {
-  borderRight: '2px solid #133370'
 };
 
 export default UsernameInput;

@@ -9,4 +9,7 @@ cache:
   yarn: true
 
 before_script: yarn
-script: yarn lint && yarn build
+script: 
+  - yarn lint
+  - yarn build
+  - yarn test

@@ -1,14 +1,34 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import LoadingIcon from './LoadingIcon';
-import ErrorText from './ErrorText';
 import ShareButtons from './ShareButtons';
-import UserInfo from './UserInfo';
+import LoadingIcon from './LoadingIcon';
 import PullRequest from './PullRequest';
 import IssuesLink from './IssuesLink';
 import MeLinkInfo from './MeLinkInfo';
-import { GITHUB_TOKEN } from '../../../../config';
-import isPRLabelValid from '../../../../utils/isPRLabelValid';
+import ErrorText from './ErrorText';
+import UserInfo from './UserInfo';
+import { fetchInfoFromGitHub } from '../../../../utils/utils';
+import { GITHUB_TOKEN, TOTAL_PR_COUNT, TOTAL_OTHER_PR_COUNT, GITHUB_ORG_NAME, LF_CAREER_URL } from '../../../../config';
+
+/**
+ * Returns an object containing user info.
+ *
+ * @param {string} username
+ * @returns {*}
+ */
+export async function fetchUserInfo(username) {
+  const apiUrls = [
+    `https://api.github.com/search/issues?q=author:${username}+is:pr+created:2019-10-01..2019-10-31`,
+    `https://api.github.com/search/users?q=user:${username}`,
+    `https://api.github.com/orgs/${GITHUB_ORG_NAME}/members/${username}`
+  ];
+  const results = apiUrls.map(url => fetchInfoFromGitHub(url, GITHUB_TOKEN));
+  let [data, userDetail, membershipStatus] = await Promise.all(results);
+
+  [data, userDetail, membershipStatus] = [await data.json(), await userDetail.json(), membershipStatus.ok];
+
+  return { data, userDetail, membershipStatus };
+}
 
 /**
  * Pull Requests component.
@@ -64,42 +84,9 @@ class PullRequests extends Component {
   fetchPullRequests = async () => {
     try {
       const username = this.props.username;
-      const apiUrl = [
-        `https://api.github.com/search/issues?q=author:${username}+is:pr+created:2019-10-01..2019-10-31`,
-        `https://api.github.com/search/users?q=user:${username}`
-      ];
+      const userInfo = await fetchUserInfo(username);
 
-      this.setState({
-        loading: true
-      });
-
-      const allResponses = apiUrl.map(url =>
-        fetch(url, {
-          headers: {
-            Authorization: `token ${GITHUB_TOKEN}`
-          }
-        })
-          .then(response => response.json())
-          .catch(error =>
-            this.setState({
-              loading: false,
-              error
-            })
-          )
-      );
-
-      const [data, userDetail] = await Promise.all(allResponses);
-
-      data.items = data.items.filter(pullRequest => isPRLabelValid(pullRequest.labels));
-      const count = this.counterOtherRepos(data, userDetail);
-
-      this.setState({
-        data: this.getValidPullRequests(data),
-        userDetail,
-        loading: false,
-        otherReposCount: count,
-        error: null
-      });
+      !userInfo.membershipStatus ? this.showNotAMemberMessage() : this.displayPullRequests(userInfo);
     } catch (error) {
       this.setState({
         error,
@@ -110,18 +97,40 @@ class PullRequests extends Component {
     }
   };
 
+  /**
+   * Displays general error message.
+   *
+   * @returns {node}
+   */
   getErrorMessage = () => {
     const { data, error } = this.state;
 
     if (error && error.description) {
-      return error.error_description;
+      return <> error.error_description</>;
     }
 
     if (data && data.errors) {
-      return data.errors.message;
+      return <> data.errors.message</>;
     }
 
-    return "Couldn't find any data or we hit an error, try again?";
+    return <> Couldn&apos;t find any data or we hit an error, try again?</>;
+  };
+
+  /**
+   * Displays Error if User is not a member of organization.
+   *
+   * @returns {node}
+   */
+  getNotAMemberMessage = () => {
+    return (
+      <>
+        You are not a member of Leapfrog Technology. However, you can join our{' '}
+        <a href={LF_CAREER_URL} target="_blank" rel="noopener noreferrer">
+          awesome team
+        </a>
+        . 😉
+      </>
+    );
   };
 
   /**
@@ -131,11 +140,11 @@ class PullRequests extends Component {
    * @returns {boolean}
    */
   conditionChecker(data) {
-    if (data.items.length < 10) {
+    if (data.items.length < TOTAL_PR_COUNT) {
       return false;
     }
 
-    return this.state.otherReposCount >= 4;
+    return this.state.otherReposCount >= TOTAL_OTHER_PR_COUNT;
   }
 
   /**
@@ -145,7 +154,7 @@ class PullRequests extends Component {
    * @param {*} userDetail
    * @returns {number}
    */
-  counterOtherRepos(data, userDetail) {
+  countOtherRepos(data, userDetail) {
     const user = userDetail.items[0].login;
     let count = 0;
 
@@ -165,6 +174,28 @@ class PullRequests extends Component {
   }
 
   /**
+   * Change state to list PRs.
+   *
+   * @param {*} userInfo
+   */
+  displayPullRequests = userInfo => {
+    const { data, userDetail } = userInfo;
+    const validData = this.getValidPullRequests(data);
+    const otherReposCount = this.countOtherRepos(validData, userDetail);
+
+    this.props.setUserContributionCount(validData.items.length, otherReposCount);
+
+    this.setState({
+      data: validData,
+      userDetail,
+      loading: false,
+      otherReposCount,
+      error: null,
+      isOrgMember: true
+    });
+  };
+
+  /**
    * Validates and returns an object containing valid pull requests.
    *
    * @param {*} data
@@ -182,6 +213,18 @@ class PullRequests extends Component {
   }
 
   /**
+   * Shows up NotAMember message for non leapfroggers.
+   */
+  showNotAMemberMessage = () => {
+    this.setState({
+      isOrgMember: false,
+      loading: false,
+      data: null,
+      userDetail: null
+    });
+  };
+
+  /**
    * Render the component.
    */
   render = () => {
@@ -190,6 +233,9 @@ class PullRequests extends Component {
 
     if (loading) {
       return <LoadingIcon />;
+    }
+    if (!this.state.isOrgMember) {
+      return <ErrorText errorMessage={this.getNotAMemberMessage()} />;
     }
     if (error || data.errors || data.message) {
       return <ErrorText errorMessage={this.getErrorMessage()} />;
@@ -220,7 +266,8 @@ class PullRequests extends Component {
 }
 
 PullRequests.propTypes = {
-  username: PropTypes.string
+  username: PropTypes.string,
+  setUserContributionCount: PropTypes.func.isRequired
 };
 
 export default PullRequests;

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { pullRequestAmount } from './pullRequestAmount';
-import { HOSTNAME } from '../../../../config';
+import { HOSTNAME, TOTAL_PR_COUNT } from '../../../../config';
 
 const ShareButtons = ({ username, pullRequestCount }) => (
   <div className="pb-8 flex justify-center">
@@ -10,7 +9,7 @@ const ShareButtons = ({ username, pullRequestCount }) => (
         target="_blank"
         rel="noopener noreferrer"
         className="bg-blue text-white rounded px-2 py-1 pointer text-white no-underline text-sm"
-        href={`https://twitter.com/intent/tweet?text=My progress on frogtoberfest ${pullRequestCount} / ${pullRequestAmount}&url=${HOSTNAME}/user/${username}&hashtags=frogtoberfest, frogtoberfest`}
+        href={`https://twitter.com/intent/tweet?text=My progress on frogtoberfest ${pullRequestCount} / ${TOTAL_PR_COUNT}&url=${HOSTNAME}/user/${username}&hashtags=frogtoberfest, frogtoberfest`}
         data-size="large"
       >
         <i className="fab fa-twitter fa-lg" /> Tweet

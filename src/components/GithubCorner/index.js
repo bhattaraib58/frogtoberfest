@@ -5,7 +5,7 @@ import './GithubCorner.css';
 const GithubCorner = () => (
   <a
     href="https://github.com/leapfrogtechnology/frogtoberfest"
-    className="github-corner"
+    className="GithubCorner"
     aria-label="Fork me on Github"
     target="_blank"
     rel="noopener noreferrer"
@@ -17,10 +17,7 @@ const GithubCorner = () => (
       style={{
         fill: '#EE7600',
         color: '#FFFFFF',
-        position: 'absolute',
-        top: 0,
-        border: 0,
-        right: 0
+        border: 0
       }}
       aria-hidden="true"
     >

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import dateFormatter from '../../../../../utils/dateFormater';
+import { formatDate } from '../../../../../utils/utils';
 
 const PullRequestInfo = ({ pullRequest }) => (
   <div>
@@ -9,12 +9,17 @@ const PullRequestInfo = ({ pullRequest }) => (
         {pullRequest.user.login}
       </a>{' '}
       submitted a pull request{' '}
-      <a className="text-blue-dark link no-underline hover:underline" href={pullRequest.html_url}>
+      <a
+        className="text-blue-dark link no-underline hover:underline"
+        target="_blank"
+        rel="noopener noreferrer"
+        href={pullRequest.html_url}
+      >
         {pullRequest.repository_url.split('repos/')[1]}#{pullRequest.number}
       </a>
     </div>
     <div className="text-grey-dark">
-      {pullRequest.title} on {dateFormatter(pullRequest.created_at)}
+      {pullRequest.title} on {formatDate(pullRequest.created_at)}
     </div>
   </div>
 );

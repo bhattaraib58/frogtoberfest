@@ -1,4 +1,13 @@
-.github-corner:hover .octo-arm {
+.GithubCorner {
+  display: inline-block;
+  position: fixed;
+  left: auto;
+  top: 0;
+  right: 0;
+  bottom: auto;
+}
+
+.GithubCorner:hover .octo-arm {
   animation: octocat-wave 560ms ease-in-out;
 }
 
@@ -7,12 +16,10 @@
   100% {
     transform: rotate(0);
   }
-
   20%,
   60% {
     transform: rotate(-25deg);
   }
-
   40%,
   80% {
     transform: rotate(10deg);
@@ -20,11 +27,10 @@
 }
 
 @media (max-width: 500px) {
-  .github-corner:hover .octo-arm {
+  .GithubCorner:hover .octo-arm {
     animation: none;
   }
-
-  .github-corner .octo-arm {
+  .GithubCorner .octo-arm {
     animation: octocat-wave 560ms ease-in-out;
   }
 }

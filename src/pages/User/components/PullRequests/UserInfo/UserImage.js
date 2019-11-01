@@ -6,7 +6,7 @@ const UserImage = ({ userImage, username }) => (
     <img
       id="userImage"
       alt={`GitHub user: ${username}`}
-      className="text-center rounded-full w-32 h-32 border-4 border-solid border-white bg-white overflow-hidden dim"
+      className="text-center rounded-full w-48 h-48 border-8 border-solid border-white bg-white overflow-hidden dim"
       src={userImage}
     />
   </a>

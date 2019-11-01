@@ -1,26 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import UserImage from './UserImage';
+
+import { TOTAL_PR_COUNT, TOTAL_OTHER_PR_COUNT } from '../../../../../config';
 import PullRequestCount from './PullRequestCount';
 import ResultMessage from './ResultMessage';
-import { pullRequestAmount, otherReposAmount } from '../pullRequestAmount';
+import UserImage from './UserImage';
+import MotivationalMessage from './MotivationalMessage';
 
 const UserInfo = ({ username, userImage, pullRequestCount, otherReposCount }) => (
   <div className="pb-2 flex flex-wrap justify-center content-center rounded mx-auto overflow-hidden w-5/6 lg:w-1/2">
     <div className="mx-4">{userImage && <UserImage userImage={userImage} username={username} />}</div>
-    <div
-      className="flex flex-wrap justify-center content-center flex-col"
-      style={pullRequestCount >= pullRequestAmount ? completeMark : incompleteMark}
-    >
-      <PullRequestCount pullRequestCount={pullRequestCount} pullRequestAmount={pullRequestAmount} />
-      <ResultMessage message="Total PR'S" />
-    </div>
-    <div
-      className="flex flex-wrap justify-center content-center flex-col"
-      style={otherReposCount >= otherReposAmount ? completeMark : incompleteMark}
-    >
-      <PullRequestCount pullRequestCount={otherReposCount} pullRequestAmount={otherReposAmount} />
-      <ResultMessage message="Other Repo PR'S" />
+    <div className="flex flex-col  flex-wrap justify-center content-center">
+      <div className="flex flex-wrap justify-center content-center">
+        <div
+          className="flex flex-wrap justify-center content-center flex-col"
+          style={pullRequestCount >= TOTAL_PR_COUNT ? completeMark : incompleteMark}
+        >
+          <PullRequestCount pullRequestCount={pullRequestCount} pullRequestAmount={TOTAL_PR_COUNT} />
+          <ResultMessage message="Total PRs" />
+        </div>
+        <div
+          className="flex flex-wrap justify-center content-center flex-col"
+          style={otherReposCount >= TOTAL_OTHER_PR_COUNT ? completeMark : incompleteMark}
+        >
+          <PullRequestCount pullRequestCount={otherReposCount} pullRequestAmount={TOTAL_OTHER_PR_COUNT} />
+          <ResultMessage message="Other Repo PRs" />
+        </div>
+      </div>
+      <div className="flex flex-wrap justify-center content-center flex-col">
+        <MotivationalMessage pullRequestCount={pullRequestCount} otherReposCount={otherReposCount} />
+      </div>
     </div>
   </div>
 );
